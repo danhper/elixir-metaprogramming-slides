@@ -1,0 +1,150 @@
+section
+  section
+    h1 Daniel Perez
+    h3
+      | CTO@
+      a(href="http://claudetech.com" target="_blank") ClaudeTech
+    h3
+      i.fa.fa-github.fa-margin
+      a(href="https://github.com/tuvistavie" target="_blank") tuvistavie
+    h4
+      a(href="http://tuvistavie.com/slides/metaprogramming" target="_blank") http://tuvistavie.com/slides/metaprogramming
+
+section
+  section
+    h2 Today's topic
+    h3 Metaprogramming in Elixir
+    br
+    .fragment(data-fragment-index="2")
+      h4 Target audience
+      ul
+        li At least basic knowledge of Elixir
+
+  section
+    h3 Metaprogramming in Elixir
+    ol
+      li Metaprogramming and macros
+      li AST and code representation
+      li Writing macros
+      li Writing DSLs
+      li Metaprogramming use cases
+
+section
+  section
+    h2 What is metaprogramming?
+    blockquote.fragment
+      | computer programs with the ability to treat programs as their data.
+  section
+    h2 What is metaprogramming?
+    h3 In today context:
+    
+    .fragment
+      h3 A program which can modify itself
+  
+  section
+    h2 How do we metaprogram?
+    
+    ul
+      li Preprocesor macros (C, C++)
+      li Reflection (Java, Go)
+      li Dynamic program modification (Ruby, Python)
+      li Macros modifying AST (Lisp, Elixir)
+
+  section
+    h2 A short Ruby example
+    pre: code.ruby
+      include ./snippets/define_method.rb
+
+section
+  section
+    h2 What are macros?
+    blockquote.fragment
+      | a rule that specifies how a certain input sequence should be mapped to a replacement output sequence
+  section
+    h2 Preprocessor macros
+    p Transform the program before the compiler runs
+    h4 Example in C
+    pre: code.c
+      include ./snippets/preproc_macro.c
+
+section
+  section
+    h2 A long long time ago in LispLand
+    .fragment
+      h3 Code is data, data is code!
+  section
+    h2
+      | Homoiconicity 
+      span.fragment: small.text-middle they say...
+    .fragment
+      pre: code.lisp
+        | (+ 1 2 3)
+      p is
+      ul
+        li.fragment a list containing <code>+ 1 2 3</code>
+        li.fragment an expression adding <code>1 2 3</code>
+
+  section
+    h2 Back to the future
+    h3.fragment And Elixir?
+    p.fragment It's like Lisp...
+    p.fragment but Jose hid the parentheses
+
+section
+  section
+    h2 Enter the AST
+  section
+    h2 Abstract Syntax Tree
+    img(src="images/ast.png")
+  section
+    h2 Compiler frontend
+    img(src="images/compiler.png")
+  section
+    h2 AST in Elixir
+    .fragment
+      h3 An expression is a tuple
+    .fragment
+      p Simple expression
+      pre: code.elixir
+        | iex(1)> quote do: 1 + 2
+        | {:+, [context: Elixir, import: Kernel], [1, 2]}
+    .fragment
+      p A little more complex expression
+      pre: code.elixir
+        | iex(2)> quote do 
+        | ...(2)>   if a > 20, do: "major", else: "minor"  
+        | ...(2)> end
+        | {:if, [context: Elixir, import: Kernel],
+        |  [{:>, [context: Elixir, import: Kernel], [{:a, [], Elixir}, 20]},
+        |   [do: "major", else: "minor"]]}
+
+section
+  section
+    h2 Writing macros
+    h3 Quoting and unquoting
+    ul
+      li
+        | <code>quote</code> transforms an expression into its AST representation
+        .fragment(data-fragment-index="2") <code>`</code> in Lisp
+      li <code>unquote</code> allows to injects a value in the AST
+        .fragment(data-fragment-index="2") <code>,</code> in Lisp
+
+  section
+    h2 How to use <code>unquote</code>
+    pre: code.elixir
+      | iex(1)> a = 5
+      | iex(2)> ast = quote do 
+      | ...(2)>   a + 5
+      | ...(2)> end
+      | iex(3)> Code.eval_quoted(ast)
+      | ** (CompileError) nofile:1: undefined function a/0
+
+  section(data-transition="fade-in slide-out")
+    h2 How to use <code>unquote</code>
+    pre: code.elixir
+      | iex(1)> a = 5
+      | iex(2)> ast = quote do 
+      | ...(2)>   unquote(a) + 5
+      | ...(2)> end
+      | iex(3)> Code.eval_quoted(ast)
+      | {10, []}
