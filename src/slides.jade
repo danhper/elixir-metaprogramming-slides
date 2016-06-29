@@ -126,11 +126,13 @@ section
       li
         | <code>quote</code> transforms an expression into its AST representation
         .fragment(data-fragment-index="2") <code>`</code> in Lisp
-      li <code>unquote</code> allows to injects a value in the AST
+      li <code>unquote</code> allows to inject a value in the AST
         .fragment(data-fragment-index="2") <code>,</code> in Lisp
+      li <code>unquote_splicing</code> allows to inject an array in the AST
+        .fragment(data-fragment-index="2") <code>,@</code> in Lisp
 
   section
-    h2 How to use <code>unquote</code>
+    h2 Using <code>unquote</code>
     pre: code.elixir
       | iex(1)> a = 5
       | iex(2)> ast = quote do 
@@ -140,7 +142,7 @@ section
       | ** (CompileError) nofile:1: undefined function a/0
 
   section(data-transition="fade-in slide-out")
-    h2 How to use <code>unquote</code>
+    h2 Using <code>unquote</code>
     pre: code.elixir
       | iex(1)> a = 5
       | iex(2)> ast = quote do 
@@ -148,3 +150,90 @@ section
       | ...(2)> end
       | iex(3)> Code.eval_quoted(ast)
       | {10, []}
+
+  section
+    h2 Using <code>unquote_splicing</code>
+    pre: code.elixir
+      | iex(1)> args = ["a,b,c", ","]
+      | iex(2)> ast = quote do
+      | ...(2)>   String.split(unquote(args))
+      | ...(2)> end
+      | iex(3)> Code.eval_quoted(ast)
+      | ** (FunctionClauseError) no function clause matching in String.Break.split/1
+
+  section(data-transition="fade-in slide-out")
+    h2 Using <code>unquote_splicing</code>
+    pre: code.elixir
+      | iex(1)> args = ["a,b,c", ","]
+      | iex(2)> ast = quote do
+      | ...(2)>   String.split(unquote_splicing(args))
+      | ...(2)> end
+      | iex(3)> Code.eval_quoted(ast)
+      | {["a", "b", "c"], []}
+
+section
+  section
+    h1 Writing macros
+  section
+    h2 Reimplementing <code>if</code>
+    pre: code.elixir
+      include ./snippets/if.ex
+
+  section
+    h2 Reimplementing <code>defdelegate</code>
+    pre: code.elixir
+      | defdelegate fun(a, b), to: Mod
+
+    .fragment
+      p should expand to
+      pre: code.elixir
+        | def fun(a, b) do
+        |   Mod.fun(a, b)
+        | end
+
+  section(data-transition="fade-in slide-out")
+    h2 Reimplementing <code>defdelegate</code>
+    h4 Implementing <code>defdelegate</code>
+    pre: code.elixir
+      include ./snippets/defdelegate.ex
+
+  section
+    h2 Macro expansion
+    ul
+      li Macro are expanded at compile time
+      li Compiler expands until it reaches a special form
+      li Expansion can be checked with <code>Macro.expand</code>
+      li Expanded form can be formatted with <code>Macro.to_string</code>
+
+  section
+    h2 Macro hygiene
+    ul
+      li Macro do not leak by default
+      li Macro can use the context by using <code>var!</code>
+
+  section
+    h2 A look at Plug router
+    h3 Where is <code>conn</code>?
+    pre: code.elixir
+      | get "/hello" do
+      |   send_resp(conn, 200, "world")
+      | end
+
+  section
+    h2 Plug router like macro
+    h4 This will not work
+    pre: code.elixir
+      include ./snippets/bad_router.ex
+      | &nbsp;
+      | # when trying to use conn
+      | ** (CompileError) iex:8: undefined function conn/0
+
+  section(data-transition="fade-in slide-out")
+    h2 Plug router like macro
+    pre: code.elixir
+      include ./snippets/good_router.ex
+      | &nbsp;
+      | # somewhere else
+      | get "/foo" do
+      |   IO.inspect(conn)
+      | end
