@@ -8,7 +8,7 @@ section
       i.fa.fa-github.fa-margin
       a(href="https://github.com/tuvistavie" target="_blank") tuvistavie
     h4
-      a(href="http://tuvistavie.com/slides/metaprogramming" target="_blank") http://tuvistavie.com/slides/metaprogramming
+      a(href="http://bit.ly/metaprogramming-ex" target="_blank") http://bit.ly/metaprogramming-ex
 
 section
   section
@@ -207,8 +207,8 @@ section
   section
     h2 Macro hygiene
     ul
-      li Macro do not leak by default
-      li Macro can use the context by using <code>var!</code>
+      li Macros are hygienic by default: they do not leak
+      li Macros can be non-hygienic by using <code>var!</code>
 
   section
     h2 A look at Plug router
@@ -246,12 +246,15 @@ section
       li Domain Specific Language
       li More or less a "mini-language"
       li Usually a set of macros/functions
-    h3 Examples
-    ul
-      li Mix config
-      li Phoenix and Plug router
-      li ExUnit
-      li.fragment: a(href="https://github.com/tuvistavie/ex_cli") ExCLI
+    .fragment
+      h3 Examples
+      ul
+        li Mix config
+        li Phoenix router
+        li ExUnit
+        li.fragment
+          a(href="https://github.com/tuvistavie/ex_cli") ExCLI
+          | &nbsp; (Today's sample)
 
   section
     h2 Writing a DSL
@@ -275,14 +278,14 @@ section
     h2 Using <code>use</code>
     ul
       li
-        | <code>use Module, opts</code> is equivalent to
+        | <code>use MyModule, opts</code> is equivalent to
         ul
           li <code>require Module</code>
           li <code>Module.__using__(opts)</code>
       li <code>use</code> is (often) used to inject functionality
 
   section
-    h2 Definining <code>__using__</code>
+    h2 Defining <code>__using__</code>
     pre: code.elixir
       include ./snippets/using.ex
 
