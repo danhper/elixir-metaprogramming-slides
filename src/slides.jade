@@ -237,3 +237,105 @@ section
       | get "/foo" do
       |   IO.inspect(conn)
       | end
+
+section
+  section
+    h1 Writing a DSL
+  section
+    h2 What's a DSL?
+    ul
+      li Domain Specific Language
+      li More or less a "mini-language"
+      li Usually a set of macros/functions
+    h3 Examples
+    ul
+      li Mix config
+      li Phoenix and Plug router
+      li ExUnit
+      li.fragment: a(href="https://github.com/tuvistavie/ex_cli") ExCLI
+
+  section
+    h2 Writing a DSL
+    pre: code.elixir
+      include ./snippets/simple_cli.exs
+
+  section
+    h2 We want to
+    ul
+      li Write the DSL macros
+      li Store the data defined in macros
+      li Retrieve and use the data
+
+  section
+    h2 Storing data
+    ul
+      li Module attributes (compile time)
+      li External process (run time)
+
+  section
+    h2 Using <code>use</code>
+    ul
+      li
+        | <code>use Module, opts</code> is equivalent to
+        ul
+          li <code>require Module</code>
+          li <code>Module.__using__(opts)</code>
+      li <code>use</code> is (often) used to inject functionality
+
+  section
+    h2 Definining <code>__using__</code>
+    pre: code.elixir
+      include ./snippets/using.ex
+
+  section
+    h2 <code>before_compile</code>
+    pre: code.elixir
+      include ./snippets/before_compile.ex
+
+  section
+    h2 Simple setter
+    pre: code.elixir
+      include ./snippets/simple_setter.ex
+
+  section
+    h2 Changing scope
+    pre: code.elixir
+      include ./snippets/command.ex
+
+  section
+    h2 Changing scope
+    pre: code.elixir
+      include ./snippets/argument.ex
+
+  section
+    h2 Definining functions
+    pre: code.elixir
+      include ./snippets/run.ex
+
+  section
+    h2 Trying it out
+    pre: code.elixir
+      include ./snippets/use_dsl.ex
+
+section
+  section
+    h2 Wrapping up
+    h4 Today we saw
+    ul
+      li Metaprogramming
+      li Macros
+      li How to write a DSL
+    .fragment
+      h4 We did not see
+      ul
+        li Using other processes to store data
+        li How to test macros
+        li Code generation
+  section
+    h2 Wrapping up
+    h4 A few guidelines
+    ul
+      li Do not use macros just to use macros
+      li Do not create DSLs just to create DSLs
+      li Test your macros properly
+      li.fragment Have fun!
