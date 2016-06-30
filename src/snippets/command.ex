@@ -1,8 +1,8 @@
 defmacro command(name, do: block) do
   quote do
-    @command %{name: name}
+    @command %{name: unquote(name)}
     unquote(block)
-    update_in @app[:commands], &([@command | &1])
+    @app Map.put(@app, :commands, [@command | @app.commands])
     @command nil
   end
 end

@@ -1,7 +1,7 @@
 defmacro argument(name) do
   quote do
     if @command do
-      update_in @command[:arguments], &([name | &1])
+      @command Map.put(@command, :arguments, [unquote(name), @command.arguments])
     else
       raise "argument should be called from inside a command"
     end
